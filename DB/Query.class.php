@@ -243,7 +243,6 @@
 					//when looping, we change $value value and run
 					$value;
 				$this->general_obj->bind_param('s',$value);
-
 				//loop through the array, to bind values
 					for($i = 0; $i < count($this->_bindings); $i++){
 						$value = $this->_bindings[$i];
