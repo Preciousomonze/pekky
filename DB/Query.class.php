@@ -172,7 +172,7 @@
 		/**
 		 * For setting $this->bind_type value
 		 * @param mixed $value the value to bind
-		 * @param string $placeholder, only applicable to pdo
+		 * @param mixed $placeholder, only applicable to pdo
 		 * @param string $data_type uses mysqli short form s(string),i(int),d(double),b(blob), for pdo, it only recognises s and i, defaults to $this->pdo_param_type
 		 */
 		public function bind($value,$placeholder='',$data_type = 's'){
@@ -258,10 +258,14 @@
 				try{
 					//loop through the array, to bind values
 					for($i = 0, $j = 1; $i < count($this->_bindings); $i++){
-						if(is_int($this->_bindings[$i]))
-							var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_INT));
-						else
-							var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_STR));
+						if(is_int($this->_bindings[$i])){
+							//var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_INT));
+							$this->bind($this->_bindings[$i],$j,'i');
+						}
+						else{
+							//var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_STR));
+							$this->bind($this->_bindings[$i],$j,'s');
+						}
 						$j++;
 					}
 				$result = $this->general_obj->execute();
