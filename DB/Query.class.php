@@ -258,11 +258,9 @@
 					//loop through the array, to bind values
 					for($i = 0, $j = 1; $i < count($this->_bindings); $i++){
 						if(is_int($this->_bindings[$i])){
-							//var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_INT));
 							$this->bind($this->_bindings[$i],$j,'i');
 						}
 						else{
-							//var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_STR));
 							$this->bind($this->_bindings[$i],$j,'s');
 						}
 						$j++;
