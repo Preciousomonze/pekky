@@ -48,8 +48,8 @@
      * Importing the php mailer.
      * @var PHPMailer
      */
-	 private $mail = '';
-	 
+     private $mail = '';
+     
     /**
      * The HOST FOR SMTP PURPOSES.
      * @var string
@@ -91,36 +91,30 @@
 		 
 		 $this->mail = new PHPMailer();
 		 if($this->use_smtp == true){
-		 $this->mail->isSMTP();
-	
-		 	$this->mail->smtpDebug = 1;
- $this->mail->SMTPAuth = true;
-//If SMTP requires TLS encryption then set it
-$this->mail->SMTPSecure = "tls";
-$this->mail->SMTPKeepAlive = true; // SMTP connection will not close after each email sent, reduces SMTP overhead
-//$this->mail->Port = 465;
-
-$this->mail->Port = 587;
+		     $this->mail->isSMTP();
+	     	$this->mail->smtpDebug = 1;
+             $this->mail->SMTPAuth = true;
+            //If SMTP requires TLS encryption then set it
+            $this->mail->SMTPSecure = "tls";
+            $this->mail->SMTPKeepAlive = true; // SMTP connection will not close after each email sent, reduces SMTP overhead
+            //$this->mail->Port = 465;
+            $this->mail->Port = 587;
 		 }
 		 
 	 }
 	 
     public function build(){
 		if($this->use_smtp == true){
-			
-		
-        $this->mail->Host = $this->host;
-	 
-$this->mail->Username = trim($this->username);
-$this->mail->Password = trim($this->password);
+           $this->mail->Host = $this->host;
+            $this->mail->Username = trim($this->username);
+            $this->mail->Password = trim($this->password);
 		}
-$this->mail->setFrom(trim($this->from), trim($this->from_name));
-//$this->mail->From = $this->from;
-//$this->mail->FromName = $this->from_name;
-$this->mail->Subject = $this->subject;
-//$mail->addReplyTo('list@example.com', 'List manager');
-$this->mail->isHtml(true);
-
+        $this->mail->setFrom(trim($this->from), trim($this->from_name));
+        //$this->mail->From = $this->from;
+        //$this->mail->FromName = $this->from_name;
+        $this->mail->Subject = $this->subject;
+        //$mail->addReplyTo('list@example.com', 'List manager');
+        $this->mail->isHtml(true);
     }
     function set_body ($body,$alt_body = '') {
 		$this->alt_body = $alt_body;
@@ -149,6 +143,16 @@ $this->mail->isHtml(true);
              echo 'Mailer Error: ' . $this->mail->ErrorInfo;
         } else {
             return true;
+        }
+    }
+    /**
+     * TO add headers to the mail
+     * @param $value should be like this e.g 'MIME-Version: 1.0'
+     */
+    function add_header($value){
+        $value = isset($value) ? trim($value) : '';
+        if(!empty($value)){
+            $this->mail->addCustomHeader($value);
         }
     }
 /*	

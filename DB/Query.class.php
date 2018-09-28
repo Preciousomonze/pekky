@@ -166,14 +166,14 @@
 		 * @param string $value the value to set
 		 */
 		public function set_bind_type($value){
-			$this->bind_type = trim($value);
+			$this->bind_type = isset($value) ? strtolower(trim($value)) : '';
 		}
 
 		/**
 		 * For setting $this->bind_type value
 		 * @param mixed $value the value to bind
-		 * @param string $placeholder, only applicable to pdo
-		 * @param string $data_type uses mysqli short form s(string),i(int),d(double),b(blob), b
+		 * @param mixed $placeholder, only applicable to pdo
+		 * @param string $data_type uses mysqli short form s(string),i(int),d(double),b(blob), for pdo, it only recognises s and i, defaults to $this->pdo_param_type
 		 */
 		public function bind($value,$placeholder='',$data_type = 's'){
 			$data_type = isset($data_type) ? trim($data_type) : '';
@@ -195,25 +195,29 @@
 							$d_type = 's';
 					}
 
-				$this->general_obj->bind_param($d_type,$value);
+					if($this->bind_type == 'param')
+					$this->general_obj->bind_param($d_type,$value);
+					else
+					$this->general_obj->bind_value($d_type,$value);
+					
 				break;
 				default:
 					//switching data types
 					switch($data_type){
 						case 'i':
-							$d_type = 'i';
+							$d_type = PDO::PARAM_INT;
 						break;
-						case 'b':
-							$d_type = 'b';
-						break;
-						case 'd': 
-							$d_type = 'd';
+						case 's': 
+							$d_type = PDO::PARAM_STR;
 						break;
 						default:
-							$d_type = 's';
+							$d_type = $this->pdo_param_type;
 					}
-				$this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_INT);
-				
+				if($this->bind_type == 'param')
+					$this->general_obj->bindParam($placeholder,$value,$d_type);
+				else	
+					$this->general_obj->bindValue($placeholder,$value,$d_type);
+
 			}
 		}
 
@@ -239,7 +243,6 @@
 					//when looping, we change $value value and run
 					$value;
 				$this->general_obj->bind_param('s',$value);
-
 				//loop through the array, to bind values
 					for($i = 0; $i < count($this->_bindings); $i++){
 						$value = $this->_bindings[$i];
@@ -254,10 +257,12 @@
 				try{
 					//loop through the array, to bind values
 					for($i = 0, $j = 1; $i < count($this->_bindings); $i++){
-						if(is_int($this->_bindings[$i]))
-							var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_INT));
-						else
-							var_dump($this->general_obj->bindParam($j,$this->_bindings[$i],PDO::PARAM_STR));
+						if(is_int($this->_bindings[$i])){
+							$this->bind($this->_bindings[$i],$j,'i');
+						}
+						else{
+							$this->bind($this->_bindings[$i],$j,'s');
+						}
 						$j++;
 					}
 				$result = $this->general_obj->execute();
